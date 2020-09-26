@@ -41,7 +41,7 @@ router.post("/register", (req, res) => {
       //if user already exists in database
       if (users.length > 0) {
         console.log('users :', user.email, users)
-        res.send({success: false, message: "Email already exists"})
+        res.send({ success: false, message: "Email already exists" })
       } else {
         //add the user to the db
         user.save((err) => {
@@ -81,17 +81,17 @@ router.get("/login", (req, res) => {
   User.findOne({ email: email }, async (err, user) => {
     //no user in database has specified email
     if (!user) {
-      res.send({success: false, message: "User does not exist"})
+      res.send({ success: false, message: "User does not exist" })
     } else {
       //email exists but incorrect password
       let match = await passMatch(user, password)
       if (!match) {
         console.log("email exists but incorrect password")
-        res.send({success: false, message: "Email exists but incorrect password"})
+        res.send({ success: false, message: "Email exists but incorrect password" })
       } else {
         //email and passwords match
         console.log("Success: email and password match")
-        res.send({success: true, message: "Successful login"})
+        res.send({ success: true, message: "Successful login" })
       }
     }
   })
@@ -100,32 +100,41 @@ router.get("/login", (req, res) => {
 // create user profile
 // http://localhost:5000/user/email/:email/profile
 router.post('/email/:email/profile', (req, res) => {
-  const { lastName, firstName, dateOfBirth, university,
-    graduation, imageUrl, degree, major, profileAvaliableToRecruiter,
-    recieveMessageFromRecruiters } = req.body
+  var {     
+    email,
+    voiceChange,
+    videoChange,
+    facialFeatures,
+    fullMotionCapture,
+    humanAvatar
+  } = req.body
 
-  const { email } = req.params
+  var { email } = req.params
   console.log('user prof email', req.params, email)
   //create new profile
   const userProfile = new Profile({
-    email, lastName, firstName, dateOfBirth, university,
-    graduation, imageUrl, degree, major, profileAvaliableToRecruiter,
-    recieveMessageFromRecruiters
+    email,
+    voiceChange,
+    videoChange,
+    facialFeatures,
+    fullMotionCapture,
+    // human if true else robot
+    humanAvatar
   })
   console.log('new prof', userProfile)
 
   Profile.findOne({ email: email }, async (err, profile) => {
     if (profile && profile.length > 0) {
       console.log('prof', profile)
-      res.send({success: true, message: "Profile already exists"})
+      res.send({ success: true, message: "Profile already exists" })
     } else {
       userProfile.save(err => {
         if (err) {
           console.log(err)
-          res.send({success: false, message: err})
+          res.send({ success: false, message: err })
         } else {
           console.log("user profile successfully added")
-          res.send({success: true, message: "User profile successfully added"})
+          res.send({ success: true, message: "User profile successfully added" })
         }
       })
     }
@@ -142,9 +151,9 @@ router.get('/email/:email/profile', async (req, res) => {
     console.log('profile', profile)
 
     if (profile) {
-      res.send({success: true, message: "Success!", profile: profile})
+      res.send({ success: true, message: "Success!", profile: profile })
     } else {
-      res.send({success: false, message: `Profile does not exist for ${email}`})
+      res.send({ success: false, message: `Profile does not exist for ${email}` })
     }
   })
 })
